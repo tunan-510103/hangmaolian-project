@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平台管理注册</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8edf5 0%, #d5dde8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .register-container {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10), 0 8px 20px rgba(0, 0, 0, 0.04);
+            padding: 2.5rem 2.5rem 2.8rem;
+            width: 100%;
+            max-width: 460px;
+            transition: transform 0.2s;
+        }
+
+        .register-container:hover {
+            transform: translateY(-2px);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .register-header .role-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* 平台管理专用徽章配色——深蓝紫 */
+        .register-header .role-badge.platform {
+            background: #e6e9f5;
+            color: #2c3e7a;
+        }
+
+        .register-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #0b1b2f;
+            letter-spacing: -0.3px;
+        }
+
+        .register-header .subtitle {
+            color: #6b7b8d;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #d9e1ea;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #fafcfe;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            border-color: #2c3e7a;
+            box-shadow: 0 0 0 4px rgba(44, 62, 122, 0.10);
+            background: #ffffff;
+        }
+
+        .form-group input::placeholder {
+            color: #a9b9cc;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #2c3e7a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(44, 62, 122, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #1f2d5c;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(44, 62, 122, 0.30);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary:disabled {
+            background: #9ba9c4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: #eef2f6;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e7ed;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.97);
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .register-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eef2f6;
+            font-size: 0.9rem;
+            color: #6b7b8d;
+        }
+
+        .register-footer a {
+            color: #2c3e7a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .password-hint {
+            font-size: 0.8rem;
+            color: #8a9aa8;
+            margin-top: 0.2rem;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 1.8rem 1.5rem 2rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .register-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <div class="role-badge platform" id="roleBadge">平台管理注册</div>
+            <h1 id="registerTitle">平台管理注册</h1>
+            <div class="subtitle" id="registerSubtitle">创建您的平台管理员账号</div>
+        </div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="regAccount">邮箱</label>
+                <input type="email" id="regAccount" placeholder="请输入邮箱作为登录账号">
+            </div>
+
+            <div class="form-group">
+                <label for="regPassword">密码</label>
+                <input type="password" id="regPassword" placeholder="请设置密码（至少6位）">
+                <div class="password-hint">密码长度不少于6位</div>
+            </div>
+
+            <div class="form-group">
+                <label for="regConfirmPassword">确认密码</label>
+                <input type="password" id="regConfirmPassword" placeholder="请再次输入密码">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="registerBtn">注 册</button>
+                <button type="button" class="btn btn-secondary" id="backBtn">返回登录</button>
+            </div>
+
+            <div id="registerMessage" class="message"></div>z
+        </form>
+
+        <div class="register-footer">
+            <a href="#" id="loginLink">去登录</a>
+        </div>
+    </div>
+
+    <script src="注册.js"></script>
+</body>
+
+</html>

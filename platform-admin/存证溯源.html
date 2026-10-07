@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>存证溯源</title>
+
+    <link rel="stylesheet" href="管理界面.css">
+    <script src="request.js"></script>
+    <script src="auth-check.js"></script>
+    <link rel="stylesheet" href="存证溯源.css">
+</head>
+
+<body>
+
+    <!-- ===== 侧边导航 ===== -->
+    <aside class="sidebar">
+        <div class="logo">管理平台</div>
+        <nav>
+            <ul>
+                <li><a href="#" data-page="dashboard" onclick="location.href='管理界面.html'">首页</a></li>
+                <li><a href="#" data-page="users" onclick="location.href='用户管理.html'">用户管理</a></li>
+                <li><a href="#" data-page="permissions" onclick="location.href='权限管理.html'">权限管理</a></li>
+                <li><a href="#" data-page="quota" onclick="location.href='发票赋额.html'">发票赋额</a></li>
+                <li><a href="#" class="active" data-page="trace" onclick="location.href='存证溯源.html'">存证溯源</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">税</div>
+                <div>
+                    <div style="color:#ffffff; font-weight:500;" id="userName">税务管理员</div>
+                    <div style="font-size:0.75rem; color:#6a8ba0;" id="userEmail">tax@demo.com</div>
+                </div>
+            </div>
+            <div style="margin-top:0.5rem; font-size:0.8rem;">
+                <a href="#" style="color:#6a8ba0; text-decoration:none;" onclick="handleLogout(); return false;">退出</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===== 主内容 ===== -->
+    <main class="main">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>存证溯源</h1>
+                <div class="date-badge" id="dateDisplay">加载中...</div>
+            </div>
+            <div class="topbar-right">
+                <a href="#" class="settings-btn" onclick="handleSettings(); return false;">
+                    设置
+                </a>
+            </div>
+        </div>
+
+        <section class="trace-layout">
+
+            <div class="query-panel">
+                <h3>
+                    <span class="h3-icon"></span> 仓单查询
+                </h3>
+
+                <div class="bill-input">
+                    <label>数字仓单ID <span class="required">*</span></label>
+                    <input type="text" id="billIdInput" placeholder="例如：HTL-2025-08812" autocomplete="off" />
+                    <div class="bill-hint">
+                        输入数字仓单ID后点击查询<br>
+                        示例：
+                        <span class="example" onclick="fillExample('HTL-2025-08812')">HTL-2025-08812</span>
+                    </div>
+                </div>
+
+                <button class="query-btn" id="queryBtn" onclick="queryTrace()">
+                    <span></span> 查询链上溯源
+                </button>
+
+                <div class="query-tip">
+                    <div class="tip-title">
+                        <span></span> 查询说明
+                    </div>
+                    <ul>
+                        <li>输入货物对应的数字仓单ID</li>
+                        <li>系统自动调取航贸链上数据</li>
+                        <li>展示从入库到当前的全流程记录</li>
+                        <li>数据经仓储方、交易平台、登记机构三方交叉验证</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="trace-panel">
+                <div class="panel-header">
+                    <h3>
+                        <span class="h3-icon"></span> 链上溯源结果
+                    </h3>
+                    <span class="status-badge empty" id="traceStatus">等待查询</span>
+                </div>
+
+                <div class="trace-empty" id="traceEmpty">
+                    <div class="empty-icon"></div>
+                    <div class="empty-title">暂无溯源数据</div>
+                    <p>
+                        请在左侧输入数字仓单ID<br>
+                        查询该货物的全流程链上记录
+                    </p>
+                </div>
+
+                <div class="trace-loading" id="traceLoading" style="display:none;">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <div class="loading-text">正在查询链上数据...</div>
+                        <div class="loading-sub">正在交叉验证仓储方、交易平台、登记机构数据</div>
+                    </div>
+                </div>
+
+                <div id="traceResult" style="display:none; flex:1; flex-direction:column;">
+
+                    <div class="trace-steps">
+                        <div class="step-item done">
+                            <div class="step-dot">1</div>
+                            <div class="step-label">货物入库</div>
+                        </div>
+                        <div class="step-item done">
+                            <div class="step-dot">2</div>
+                            <div class="step-label">交易合同</div>
+                        </div>
+                        <div class="step-item done">
+                            <div class="step-dot">3</div>
+                            <div class="step-label">货权登记</div>
+                        </div>
+                        <div class="step-item done">
+                            <div class="step-dot">4</div>
+                            <div class="step-label">物流签收</div>
+                        </div>
+                    </div>
+
+                    <div class="cross-verify">
+                        <span class="verify-icon"></span>
+                        <span>已通过 <strong>仓储方 · 交易平台 · 登记机构</strong> 三方交叉验证</span>
+                    </div>
+
+                    <div class="cargo-summary">
+                        <div class="cargo-title">
+                            <span class="title-icon"></span> 货物信息
+                        </div>
+                        <div class="cargo-grid">
+                            <div class="cargo-item">
+                                <span class="cargo-label">品名</span>
+                                <strong id="cargoName">--</strong>
+                            </div>
+                            <div class="cargo-item">
+                                <span class="cargo-label">数量</span>
+                                <strong id="cargoQty">--</strong>
+                            </div>
+                            <div class="cargo-item">
+                                <span class="cargo-label">货主</span>
+                                <strong id="cargoOwner">--</strong>
+                            </div>
+                            <div class="cargo-item">
+                                <span class="cargo-label">仓库</span>
+                                <strong id="cargoWarehouse">--</strong>
+                            </div>
+                            <div class="cargo-item">
+                                <span class="cargo-label">仓单ID</span>
+                                <strong id="cargoBillId">--</strong>
+                            </div>
+                            <div class="cargo-item">
+                                <span class="cargo-label">状态</span>
+                                <strong id="cargoStatus">--</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trace-timeline" id="traceTimeline">
+                        <!-- 动态填充 -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <div
+            style="margin-top:1.5rem; font-size:0.85rem; color:#8aa8bb; text-align:center; border-top:1px solid #e2eaf0; padding-top:1.5rem;">
+            <span>数据更新于 <span id="updateTime">--</span> · 存证数据来自航贸链</span>
+        </div>
+
+    </main>
+
+    <script src="存证溯源.js"></script>
+
+</body>
+
+</html>
