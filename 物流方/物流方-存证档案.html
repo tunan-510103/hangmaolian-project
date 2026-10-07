@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航贸链 · 存证档案</title>
+    <link rel="stylesheet" href="物流方-存证档案.css">
+
+    <!-- ✅ 新增：request.js + auth-check.js -->
+    <script src="request.js"></script>
+    <script src="auth-check.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 左侧导航 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-text">物流方</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item" onclick="location.href='物流方-工作台.html'">
+                    <span class="nav-label">工作台</span>
+                </div>
+                <div class="nav-item" onclick="location.href='物流方-单证中心.html'">
+                    <span class="nav-label">单证中心</span>
+                </div>
+                <div class="nav-item active" onclick="location.href='物流方-存证档案.html'">
+                    <span class="nav-label">存证档案</span>
+                </div>
+            </nav>
+            <div class="nav-footer">
+                <!-- ✅ 退出：清登录态，跳物流方登录页 -->
+                <div class="nav-item"
+                    onclick="localStorage.removeItem('current_user'); localStorage.removeItem('token'); location.href='登录-物流方.html'">
+                    <span class="nav-label"><i class="fas fa-sign-out-alt" style="width:20px;"></i> 退出</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧主内容 -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-right">
+                    <div class="notifications">
+                        <span class="badge" id="notificationBadge">0</span>
+                        🔔
+                    </div>
+                    <button class="settings-btn" title="设置">
+                        <div id="avatarText" onclick="location.href='设置.html'">⚙</div>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- ===== 存证档案内容 ===== -->
+                <div class="archive-search">
+                    <input type="text" id="searchInput" placeholder="存证ID / 任务编号 / 货物名称">
+                    <input type="date" id="startDate">
+                    <span style="color:#7a8a9a;font-size:13px;">至</span>
+                    <input type="date" id="endDate">
+                    <select id="docType">
+                        <option value="">全部类型</option>
+                        <option value="公路运单">公路运单</option>
+                        <option value="仓单">仓单</option>
+                        <option value="海运提单">海运提单</option>
+                        <option value="铁路运单">铁路运单</option>
+                    </select>
+                    <button class="btn btn-primary" id="searchBtn">搜索</button>
+                    <button class="btn btn-outline" id="exportBtn">导出审计报告</button>
+                </div>
+
+                <div class="archive-table-wrap">
+                    <table class="archive-table">
+                        <thead>
+                            <tr>
+                                <th style="width:18%;">存证编号</th>
+                                <th style="width:12%;">单证类型</th>
+                                <th style="width:12%;">货物名称</th>
+                                <th style="width:16%;">关联任务</th>
+                                <th style="width:15%;">上链时间</th>
+                                <th style="width:10%;">验证状态</th>
+                                <th style="width:17%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveBody">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="loading-spinner">加载中...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <span>共 <span id="totalCount">0</span> 条</span>
+                        <div class="page-btns">
+                            <button class="btn-page" id="prevPage">上一页</button>
+                            <span id="pageInfo" style="padding:4px 12px;">1 / 1</span>
+                            <button class="btn-page" id="nextPage">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="物流方-存证档案.js"></script>
+</body>
+
+</html>

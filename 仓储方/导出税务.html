@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航贸链 · 导出税务数据</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="导出税务.css">
+
+    <!-- ✅ 新增：request.js + auth-check.js -->
+    <script src="request.js"></script>
+    <script src="auth-check.js"></script>
+</head>
+
+<body>
+
+    <div class="page-container">
+        <!-- 顶部栏 -->
+        <header class="top-bar">
+            <div class="top-left">
+                <button class="back-btn" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </button>
+                <h1 class="page-title"><i class="fas fa-file-export"></i> 导出税务数据</h1>
+            </div>
+        </header>
+
+        <!-- 主体内容 -->
+        <main class="main-content">
+
+            <!-- 筛选条件区 -->
+            <section class="filter-section">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="startDate">开始日期</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="filter-group">
+                        <label for="endDate">结束日期</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dataType">数据类型</label>
+                        <select id="dataType">
+                            <option value="all">全部数据</option>
+                            <option value="仓单">仓单数据</option>
+                            <option value="存证">存证数据</option>
+                            <option value="交易">交易数据</option>
+                            <option value="库存">库存数据</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="exportFormat">导出格式</label>
+                        <select id="exportFormat">
+                            <option value="excel">Excel (.xlsx)</option>
+                            <option value="pdf">PDF (.pdf)</option>
+                            <option value="csv">CSV (.csv)</option>
+                            <option value="json">JSON (.json)</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" id="queryBtn"><i class="fas fa-search"></i> 查询</button>
+                        <button class="btn btn-success" id="exportBtn"><i class="fas fa-download"></i> 导出</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 统计概览 -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <span class="stat-number" id="statTotal">--</span>
+                    <span class="stat-label">总记录数</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="statAmount">--</span>
+                    <span class="stat-label">总金额 (万元)</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="statWarehouse">--</span>
+                    <span class="stat-label">涉及仓单</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="statOnChain">--</span>
+                    <span class="stat-label">已上链存证</span>
+                </div>
+            </section>
+
+            <!-- 数据表格 -->
+            <section class="table-section">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> 税务数据明细</h3>
+                    <span class="record-count" id="recordCount">共 0 条</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>仓单编号</th>
+                                <th>货物名称</th>
+                                <th>重量</th>
+                                <th>金额 (万元)</th>
+                                <th>持有人</th>
+                                <th>数据类型</th>
+                                <th>上链时间</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="8" class="no-data"><i class="fas fa-inbox"></i> 请点击「查询」加载数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <div class="pagination">
+                    <span>共 <span id="totalCount">0</span> 条</span>
+                    <div class="page-btns">
+                        <button class="btn-page" id="prevPage"><i class="fas fa-chevron-left"></i> 上一页</button>
+                        <span id="pageInfo" style="padding:4px 12px;">1 / 1</span>
+                        <button class="btn-page" id="nextPage">下一页 <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="导出税务.js"></script>
+</body>
+
+</html>

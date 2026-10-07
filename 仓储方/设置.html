@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置</title>
+    <link rel="stylesheet" href="设置.css">
+</head>
+
+<body>
+
+    <!-- ===== Toast 提示 ===== -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ===== 顶部导航 ===== -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="#" class="back-btn" onclick="history.back(); return false;">← 返回</a>
+            <h1>系统设置</h1>
+        </div>
+        <div class="topbar-right">
+            <span id="userDisplay">演示企业</span>
+        </div>
+    </header>
+
+    <!-- ===== 设置内容 ===== -->
+    <div class="settings-container">
+
+        <!-- ===== 1. 企业信息 ===== -->
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <h2>企业信息</h2>
+                <span class="desc">修改企业基本资料</span>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item">
+                    <div class="label">
+                        <span class="title">企业名称</span>
+                        <span class="hint">显示在系统左上角</span>
+                    </div>
+                    <div class="control">
+                        <input type="text" id="companyName" value="演示企业">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">
+                        <span class="title">企业账号</span>
+                        <span class="hint">登录账号，不可修改</span>
+                    </div>
+                    <div class="control">
+                        <input type="text" id="companyAccount" value="demo" disabled>
+                    </div>
+                </div>
+                <div class="setting-item" style="border-bottom: none;">
+                    <div class="label">
+                        <span class="title">企业邮箱</span>
+                        <span class="hint">用于接收系统通知</span>
+                    </div>
+                    <div class="control">
+                        <input type="text" id="companyEmail" placeholder="请输入邮箱" value="demo@company.com">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 2. 安全设置（修改密码） ===== -->
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <h2>安全设置</h2>
+                <span class="desc">修改登录密码</span>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item">
+                    <div class="label">
+                        <span class="title">当前密码</span>
+                        <span class="hint">请输入当前登录密码</span>
+                    </div>
+                    <div class="control">
+                        <input type="password" id="currentPassword" placeholder="请输入当前密码" style="min-width:180px;">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">
+                        <span class="title">新密码</span>
+                        <span class="hint">至少6位</span>
+                    </div>
+                    <div class="control">
+                        <input type="password" id="newPassword" placeholder="请输入新密码" style="min-width:180px;">
+                    </div>
+                </div>
+                <div class="setting-item" style="border-bottom: none;">
+                    <div class="label">
+                        <span class="title">确认新密码</span>
+                        <span class="hint">请再次输入新密码</span>
+                    </div>
+                    <div class="control">
+                        <input type="password" id="confirmPassword" placeholder="请确认新密码" style="min-width:180px;">
+                        <button class="btn btn-primary btn-sm" onclick="changePassword()"
+                            onclick="location.href='登录.html'">确认修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ===== 4. 通知设置 ===== -->
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <h2>通知设置</h2>
+                <span class="desc">管理消息提醒方式</span>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item">
+                    <div class="label">
+                        <span class="title">邮件通知</span>
+                        <span class="hint">交易状态变更时发送邮件</span>
+                    </div>
+                    <div class="control">
+                        <div class="toggle active" onclick="toggleSwitch(this)">
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">
+                        <span class="title">系统消息</span>
+                        <span class="hint">登录时显示未读消息</span>
+                    </div>
+                    <div class="control">
+                        <div class="toggle active" onclick="toggleSwitch(this)">
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-item" style="border-bottom: none;">
+                    <div class="label">
+                        <span class="title">交易提醒</span>
+                        <span class="hint">新交易创建时提醒</span>
+                    </div>
+                    <div class="control">
+                        <div class="toggle" onclick="toggleSwitch(this)">
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 5. 显示设置 ===== -->
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <h2>显示设置</h2>
+                <span class="desc">界面显示偏好</span>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item" style="border-bottom: none;">
+                    <div class="label">
+                        <span class="title">列表每页显示</span>
+                        <span class="hint">交易列表每页条数</span>
+                    </div>
+                    <div class="control">
+                        <select id="pageSizeSelect">
+                            <option value="10">10 条</option>
+                            <option value="20" selected>20 条</option>
+                            <option value="50">50 条</option>
+                            <option value="100">100 条</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 6. 数据管理 ===== -->
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <h2>数据管理</h2>
+                <span class="desc">数据清理</span>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item" style="border-bottom: none;">
+                    <div class="label">
+                        <span class="title">清除所有数据</span>
+                        <span class="hint" style="color:#dc3545;">此操作不可恢复，将删除所有交易记录、设置和账号</span>
+                    </div>
+                    <div class="control">
+                        <button class="btn btn-danger btn-sm" onclick="clearAllData()">清除数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 保存按钮 ===== -->
+        <div class="settings-actions">
+            <button class="btn btn-secondary" id="resetSettingsBtn">重置</button>
+            <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+        </div>
+
+    </div>
+
+    <script src="设置.js"></script>
+</body>
+
+</html>

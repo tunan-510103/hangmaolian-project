@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仓储方 · 仓单管理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="仓储方-仓单管理.css">
+
+    <!-- ✅ 新增：request.js + auth-check.js -->
+    <script src="request.js"></script>
+    <script src="auth-check.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- ===== 左侧导航 ===== -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-text">仓储方</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item" onclick="location.href='仓储方-工作台.html'">
+                    <span class="nav-label"><i class="fas fa-tachometer-alt" style="width:20px;"></i> 工作台</span>
+                </div>
+                <div class="nav-item active" onclick="location.href='仓储方-仓单管理.html'">
+                    <span class="nav-label"><i class="fas fa-file-invoice" style="width:20px;"></i> 仓单管理</span>
+                </div>
+                <div class="nav-item" onclick="location.href='仓储方-库存管理.html'">
+                    <span class="nav-label"><i class="fas fa-warehouse" style="width:20px;"></i> 库存管理</span>
+                </div>
+            </nav>
+            <div class="nav-footer">
+                <!-- ✅ 退出：清登录态，跳仓储方登录页 -->
+                <div class="nav-item"
+                    onclick="localStorage.removeItem('current_user'); localStorage.removeItem('token'); location.href='登录-仓储方.html'">
+                    <span class="nav-label"><i class="fas fa-sign-out-alt" style="width:20px;"></i> 退出</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== 右侧主内容 ===== -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <span class="page-title"></span>
+                </div>
+                <div class="top-bar-right">
+                    <span class="company-name" id="companyName"> </span>
+                    <div class="notifications">
+                        <span class="badge" id="notifBadge"></span>
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <button class="settings-btn" title="设置">
+                        <div id="avatarText" onclick="location.href='设置.html'">⚙</div>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- 搜索栏 -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="仓单号 / 货物品名 / 货主">
+                    <select id="statusFilter">
+                        <option value="">全部状态</option>
+                        <option value="active">生效中</option>
+                        <option value="pending">待核验</option>
+                        <option value="frozen">已冻结</option>
+                        <option value="done">已完成</option>
+                    </select>
+                    <select id="areaFilter">
+                        <option value="">全部库区</option>
+                        <option value="A">A区</option>
+                        <option value="B">B区</option>
+                        <option value="C">C区</option>
+                        <option value="D">D区</option>
+                    </select>
+                    <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> 搜索</button>
+                </div>
+
+                <!-- 表格 -->
+                <div class="table-wrap">
+                    <div class="table-title"><i class="fas fa-list"></i> 仓单资产列表</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>货物</th>
+                                <th>库位</th>
+                                <th>持有人</th>
+                                <th>状态</th>
+                                <th>IoT</th>
+                                <th>最后上链时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="8">
+                                    <div class="loading-spinner">加载中...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span>共 <span id="totalCount">0</span> 条</span>
+                        <div class="page-btns">
+                            <button class="btn-page" id="prevPage">上一页</button>
+                            <span id="pageInfo" style="padding:4px 12px;">1 / 1</span>
+                            <button class="btn-page" id="nextPage">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== 抽屉 ===== -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="back-area">
+                <button class="back-btn" id="drawerBackBtn"><i class="fas fa-arrow-left"></i></button>
+                <span class="drawer-title">仓单详情 <small id="drawerIdDisplay">--</small></span>
+            </div>
+            <button class="close-btn" id="drawerCloseBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="drawer-body" id="drawerBody">
+            <div class="chain-identity">
+                <div class="item">
+                    <span class="label">TxID (交易哈希)</span>
+                    <span class="value">
+                        <span id="txHashDisplay">--</span>
+                        <button class="copy-btn" id="copyTxBtn"><i class="fas fa-copy"></i></button>
+                        <span class="badge-chain"><i class="fas fa-link"></i> 已上链</span>
+                    </span>
+                </div>
+                <div class="item">
+                    <span class="label">区块高度</span>
+                    <span class="value" id="blockHeightDisplay">--</span>
+                </div>
+                <div class="item">
+                    <span class="label">签发时间</span>
+                    <span class="value" id="issueTimeDisplay">--</span>
+                </div>
+            </div>
+            <div class="tabs" id="tabHeaders">
+                <button class="tab active" data-tab="tab-basic"><i class="fas fa-info-circle"></i> 基础信息</button>
+                <button class="tab" data-tab="tab-iot"><i class="fas fa-microchip"></i> IoT 数据</button>
+                <button class="tab" data-tab="tab-timeline"><i class="fas fa-stream"></i> 权属流转</button>
+            </div>
+            <div class="tab-content active" id="tab-basic">
+                <div class="info-grid">
+                    <div class="field"><span class="label">货物名称</span>
+                        <div class="value" id="goodsName">--</div>
+                    </div>
+                    <div class="field"><span class="label">规格</span>
+                        <div class="value" id="goodsSpec">--</div>
+                    </div>
+                    <div class="field"><span class="label">净重</span>
+                        <div class="value" id="netWeight">--</div>
+                    </div>
+                    <div class="field"><span class="label">库位</span>
+                        <div class="value" id="location">--</div>
+                    </div>
+                    <div class="field"><span class="label">当前持有人</span>
+                        <div class="value" id="holder">--</div>
+                    </div>
+                    <div class="field"><span class="label">质检报告</span>
+                        <div class="value" id="reportFile">--</div>
+                    </div>
+                </div>
+                <div class="evidence-section">
+                    <div style="font-weight:500; font-size:14px; color:#0b1a2e;"><i class="fas fa-camera"></i> 入库影像证据
+                    </div>
+                    <div class="evi-row" id="evidenceList">
+                        <div style="color:#9aaec2;font-size:13px;">加载中...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="tab-iot">
+                <div class="iot-grid" id="iotGrid">
+                    <div style="color:#9aaec2;grid-column:1/-1;text-align:center;padding:20px 0;">加载中...</div>
+                </div>
+                <div
+                    style="margin-top:16px; font-size:13px; color:#6f8aa8; background:#f8faff; padding:12px 16px; border-radius:12px; border:1px solid #edf3fa;">
+                    <i class="fas fa-database" style="color:#1d4ed8;"></i> 所有IoT数据均已上链存证，不可篡改。
+                </div>
+            </div>
+            <div class="tab-content" id="tab-timeline">
+                <div class="timeline" id="timelineList">
+                    <div style="color:#9aaec2;text-align:center;padding:20px 0;">加载中...</div>
+                </div>
+                <div
+                    style="margin-top:12px; font-size:13px; color:#6f8aa8; background:#f5f9ff; padding:10px 16px; border-radius:12px; border:1px solid #e0ebf6;">
+                    <i class="fas fa-check-circle" style="color:#34a853;"></i> 全生命周期节点均已上链存证。
+                </div>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <button class="btn btn-primary" id="btnOnchain"><i class="fas fa-link"></i> 确认上链</button>
+            <button class="btn btn-outline" id="btnEdit"><i class="fas fa-edit"></i> 编辑信息</button>
+            <button class="btn btn-success" id="btnPushTax"><i class="fas fa-file-export"></i> 推送税务</button>
+            <button class="btn btn-danger" id="btnCancel"><i class="fas fa-times-circle"></i> 注销出库</button>
+        </div>
+    </div>
+
+    <script src="仓储方-仓单管理.js"></script>
+</body>
+
+</html>

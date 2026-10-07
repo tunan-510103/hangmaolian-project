@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>设置</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .settings-wrapper {
+            max-width: 960px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 2rem 2.5rem 2.8rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e8eef4;
+            position: relative;
+        }
+
+        /* ===== 返回按钮 ===== */
+        .back-btn {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #6b8ba0;
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: #f0f4f8;
+            color: #0b1f2e;
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .settings-header {
+            margin-bottom: 2rem;
+            padding-left: 5rem;
+        }
+
+        .settings-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b1f2e;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ===== 顶部个人信息卡片 ===== */
+        .profile-top-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.2rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e8eef4;
+            flex-wrap: wrap;
+        }
+
+        .profile-top-card .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a4054, #2a5f7a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #ffffff;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .profile-top-card .info {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .profile-top-card .info .name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0b1f2e;
+        }
+
+        .profile-top-card .info .role {
+            font-size: 0.85rem;
+            color: #6b8ba0;
+            margin-top: 0.05rem;
+        }
+
+        .profile-top-card .stats {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .profile-top-card .stats .stat-item {
+            text-align: center;
+        }
+
+        .profile-top-card .stats .stat-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #9ab0c2;
+            letter-spacing: 0.04em;
+        }
+
+        .profile-top-card .stats .stat-item .value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0b1f2e;
+            margin-top: 0.1rem;
+        }
+
+        .profile-top-card .stats .stat-item .value.loading {
+            color: #9ab0c2;
+        }
+
+        /* 标签切换 */
+        .settings-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 0.5rem;
+        }
+
+        .settings-tab {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            background: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #6b8ba0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .settings-tab:hover {
+            color: #0b1f2e;
+            background: #f0f4f8;
+        }
+
+        .settings-tab.active {
+            color: #1f6f9e;
+            background: #dbeaf5;
+        }
+
+        .settings-panel {
+            display: none;
+        }
+
+        .settings-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1.5px solid #d9e1ea;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #fafcfe;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #1f5f9e;
+            box-shadow: 0 0 0 4px rgba(31, 95, 158, 0.10);
+            background: #ffffff;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #a9b9cc;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.8rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #1f5f9e;
+            color: white;
+            box-shadow: 0 4px 12px rgba(31, 95, 158, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #174a7a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(31, 95, 158, 0.30);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: #eef2f6;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e7ed;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .settings-wrapper {
+                padding: 1.2rem 1rem 1.8rem;
+            }
+
+            .back-btn {
+                position: static;
+                margin-bottom: 0.8rem;
+                padding-left: 0;
+            }
+
+            .settings-header {
+                padding-left: 0;
+                margin-bottom: 1.2rem;
+            }
+
+            .settings-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .profile-top-card {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1.2rem;
+            }
+
+            .profile-top-card .stats {
+                margin-left: 0;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .settings-tabs {
+                flex-wrap: wrap;
+            }
+
+            .settings-tab {
+                flex: 1;
+                text-align: center;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+                min-width: 70px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .settings-wrapper {
+                padding: 1rem 0.8rem 1.5rem;
+            }
+
+            .profile-top-card .stats .stat-item .value {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="settings-wrapper">
+
+        <!-- ===== 返回按钮 ===== -->
+        <button class="back-btn" onclick="handleBack()">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
+            </svg>
+            返回
+        </button>
+
+        <!-- 头部 -->
+        <div class="settings-header">
+            <h1>设置</h1>
+        </div>
+
+        <!-- ===== 顶部个人信息卡片 ===== -->
+        <div class="profile-top-card" id="profileTopCard">
+            <div class="avatar" id="topAvatar">管</div>
+            <div class="info">
+                <div class="name" id="topName">加载失败</div>
+                <div class="role">平台管理员</div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="label">邮箱</div>
+                    <div class="value" id="topEmail">--</div>
+                </div>
+                <div class="stat-item">
+                    <div class="label">注册时间</div>
+                    <div class="value" id="topRegisterTime">--</div>
+                </div>
+                <div class="stat-item">
+                    <div class="label">最后登录</div>
+                    <div class="value" id="topLastLogin">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签切换 -->
+        <div class="settings-tabs">
+            <button class="settings-tab active" data-tab="profile" onclick="switchTab('profile')">编辑资料</button>
+            <button class="settings-tab" data-tab="password" onclick="switchTab('password')">修改密码</button>
+        </div>
+
+        <!-- ===== 编辑资料 ===== -->
+        <div class="settings-panel active" id="panel-profile">
+            <form id="profileForm" onsubmit="return handleUpdateProfile(event)">
+                <div class="form-group">
+                    <label for="editName">真实姓名</label>
+                    <input type="text" id="editName" placeholder="请输入真实姓名" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">邮箱地址</label>
+                    <input type="email" id="editEmail" placeholder="请输入邮箱" required>
+                </div>
+                <div class="form-group">
+                    <label for="editBio">个人简介</label>
+                    <textarea id="editBio" placeholder="请输入个人简介" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">保存修改</button>
+                <div id="profileMessage" class="message"></div>
+            </form>
+        </div>
+
+        <!-- ===== 修改密码 ===== -->
+        <div class="settings-panel" id="panel-password">
+            <form id="passwordForm" onsubmit="return handleChangePassword(event)">
+                <div class="form-group">
+                    <label for="oldPassword">当前密码</label>
+                    <input type="password" id="oldPassword" placeholder="请输入当前密码" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">新密码</label>
+                    <input type="password" id="newPassword" placeholder="请输入新密码" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">确认新密码</label>
+                    <input type="password" id="confirmPassword" placeholder="请再次输入新密码" required>
+                </div>
+                <button type="submit" class="btn btn-primary">修改密码</button>
+                <div id="passwordMessage" class="message"></div>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="设置.js"></script>
+
+</body>
+
+</html>
