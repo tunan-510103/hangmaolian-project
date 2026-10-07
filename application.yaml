@@ -1,0 +1,57 @@
+server:
+  port: 10001
+  servlet:
+    context-path: /api
+
+spring:
+  jackson:
+    # 去掉全局 SNAKE_CASE —— 输出恢复默认 camelCase（前端读 roleType/userAccount 正常）
+    # 入站 DTO 用 @JsonAlias 兼容两种命名，效果更好更精准
+    deserialization:
+      fail-on-unknown-properties: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/trade_chain?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 19823297687aA!
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    org.apache.ibatis: debug
+    org.springframework.jdbc: warn
+
+jwt:
+  secret: chain_trade_secret_2026_abcdef_xxxxx
+  expire: 86400
+
+encrypt:
+  aes-key: trade_chain_aes256_secret_2024!!
+
+chain:
+  # mock 模式开启时，所有链调用走本地 HashUtils.genTxHash()
+  # 接入真实 FISCO BCOS 节点后再改成 false
+  mock-mode: false
+  # 管理员私钥
+  private-key: "0x1fcfa1a7a2f7b7c5ec5ac655be3d361c44f762be"
+  node-url: "192.168.0.1:20200"
+  group-id: "group0"
+  chain-id: "chain0"
+  cert-path: "./conf"
+  config-path: "./config.toml"
+  # 三个合约地址
+  auth-contract: "0x745d4de0cf93b7d1db8dd8892daf05ac745766ce"
+  order-core-contract: "0x2b5dcbae97f9d9178e8b051b08c9fb4089bae71b"
+  order-logistics-contract: "0xc860ab27901b3c2b810165a6096c64d88763617f"
+  # ABI/BIN 文件目录（AssembleTransactionProcessor 自动扫描）
+  abi-dir: "src/main/resources/abi"
+  bin-dir: "src/main/resources/bin"

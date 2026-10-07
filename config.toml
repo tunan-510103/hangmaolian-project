@@ -1,0 +1,41 @@
+[cryptoMaterial]
+
+certPath = "conf"                           # The certification path
+useSMCrypto = "false"                       # RPC SM crypto type
+
+# enableHsm = "false"
+# hsmLibPath = "/usr/local/lib/libgmt0018.so"
+# hsmKeyIndex = "1"
+# hsmPassword = "12345678"
+
+# The following configurations take the certPath by default if commented
+# caCert = "conf/ca.crt"                    # CA cert file path
+# sslCert = "conf/sdk.crt"                  # SSL cert file path
+# sslKey = "conf/sdk.key"                   # SSL key file path
+
+# The following configurations take the sm certPath by default if commented
+# caCert = "conf/sm_ca.crt"                    # SM CA cert file path
+# sslCert = "conf/sm_sdk.crt"                  # SM SSL cert file path
+# sslKey = "conf/sm_sdk.key"                    # SM SSL key file path
+# enSslCert = "conf/sm_ensdk.crt"               # SM encryption cert file path
+# enSslKey = "conf/sm_ensdk.key"                # SM ssl cert file path
+
+[network]
+messageTimeout = "10000"
+defaultGroup="group0"                            # Console default group to connect
+peers=["192.168.0.1:20200"]                      # 通过电脑A端口转发访问虚拟机
+# 证书是给 192.168.20.5 签的，但现在用 192.168.0.1 连，关闭主机名校验
+disableSslHostnameCheck = true
+
+[account]
+authCheck = "false"
+keyStoreDir = "account"
+accountFileFormat = "pem"
+accountAddress = "0x1fcfa1a7a2f7b7c5ec5ac655be3d361c44f762be"
+# ⚠️ PEM 私钥文件的实际路径（相对 config.toml 所在目录）
+# SDK 按此路径加载私钥后，getCryptoSuite().getCryptoKeyPair() 就会返回 admin 账户
+accountFilePath = "account/0x1fcfa1a7a2f7b7c5ec5ac655be3d361c44f762be.pem"
+
+[threadPool]
+# threadPoolSize = "16"         # The size of the thread pool to process message callback
+# Default is the number of cpu cores
